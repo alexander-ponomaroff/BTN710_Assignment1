@@ -1,0 +1,192 @@
+<!doctype html>
+<html class="staticrypt-html">
+<head>
+    <meta charset="utf-8">
+    <title>BTN710 Website</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- do not cache this page -->
+    <meta http-equiv="cache-control" content="max-age=0"/>
+    <meta http-equiv="cache-control" content="no-cache"/>
+    <meta http-equiv="expires" content="0"/>
+    <meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT"/>
+    <meta http-equiv="pragma" content="no-cache"/>
+
+    <style>
+        .staticrypt-hr {
+            margin-top: 20px;
+            margin-bottom: 20px;
+            border: 0;
+            border-top: 1px solid #eee;
+        }
+
+        .staticrypt-page {
+            width: 360px;
+            padding: 8% 0 0;
+            margin: auto;
+            box-sizing: border-box;
+        }
+
+        .staticrypt-form {
+            position: relative;
+            z-index: 1;
+            background: #FFFFFF;
+            max-width: 360px;
+            margin: 0 auto 100px;
+            padding: 45px;
+            text-align: center;
+            box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
+        }
+
+        .staticrypt-form input {
+            outline: 0;
+            background: #f2f2f2;
+            width: 100%;
+            border: 0;
+            margin: 0 0 15px;
+            padding: 15px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+
+        .staticrypt-form .staticrypt-decrypt-button {
+            text-transform: uppercase;
+            outline: 0;
+            background: #419eeb;
+            width: 100%;
+            border: 0;
+            padding: 15px;
+            color: #FFFFFF;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .staticrypt-form .staticrypt-decrypt-button:hover, .staticrypt-form .staticrypt-decrypt-button:active, .staticrypt-form .staticrypt-decrypt-button:focus {
+            background: #2d76b1;
+        }
+
+        .staticrypt-html {
+            height: 100%;
+        }
+
+        .staticrypt-body {
+            margin-bottom: 1em;
+            background: #49adff; /* fallback for old browsers */
+            background: -webkit-linear-gradient(right, #49adff, #49adff);
+            background: -moz-linear-gradient(right, #49adff, #49adff);
+            background: -o-linear-gradient(right, #49adff, #49adff);
+            background: linear-gradient(to left, #49adff, #49adff);
+            font-family: "Arial", sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .staticrypt-instructions {
+            margin-top: -1em;
+            margin-bottom: 1em;
+        }
+
+        .staticrypt-title {
+            font-size: 1.5em;
+        }
+
+        .staticrypt-footer {
+            position: fixed;
+            height: 20px;
+            font-size: 16px;
+            padding: 2px;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            margin-bottom: 0;
+        }
+
+        .staticrypt-footer p {
+            margin: 2px;
+            text-align: center;
+            float: right;
+        }
+
+        .staticrypt-footer a {
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body class="staticrypt-body">
+<div class="staticrypt-page">
+    <div class="staticrypt-form">
+        <div class="staticrypt-instructions">
+            <p class="staticrypt-title">BTN710 Website</p>
+            <p>Enter password to gain access!</p>
+        </div>
+
+        <hr class="staticrypt-hr">
+
+        <form id="staticrypt-form" action="#" method="post">
+            <input id="staticrypt-password"
+                   type="password"
+                   name="password"
+                   placeholder="Enter password here..."
+                   autofocus/>
+
+            <input type="submit" class="staticrypt-decrypt-button" value="DECRYPT"/>
+        </form>
+    </div>
+
+</div>
+<footer class="staticrypt-footer">
+    <p class="pull-right">Created with <a href="https://robinmoisson.github.io/staticrypt">StatiCrypt</a></p>
+</footer>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/crypto-js.min.js" integrity="sha384-lp4k1VRKPU9eBnPePjnJ9M2RF3i7PC30gXs70+elCVfgwLwx1tv5+ctxdtwxqZa7" crossorigin="anonymous"></script>
+
+<script>
+
+    /**
+     * Decrypt a salted msg using a password.
+     * Inspired by https://github.com/adonespitogo
+     */
+    var keySize = 256;
+    var iterations = 1000;
+    function decrypt (encryptedMsg, pass) {
+        var salt = CryptoJS.enc.Hex.parse(encryptedMsg.substr(0, 32));
+        var iv = CryptoJS.enc.Hex.parse(encryptedMsg.substr(32, 32))
+        var encrypted = encryptedMsg.substring(64);
+
+        var key = CryptoJS.PBKDF2(pass, salt, {
+            keySize: keySize/32,
+            iterations: iterations
+        });
+
+        var decrypted = CryptoJS.AES.decrypt(encrypted, key, {
+            iv: iv,
+            padding: CryptoJS.pad.Pkcs7,
+            mode: CryptoJS.mode.CBC
+        }).toString(CryptoJS.enc.Utf8);
+        return decrypted;
+    }
+
+    document.getElementById('staticrypt-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        var passphrase = document.getElementById('staticrypt-password').value,
+            encryptedMsg = '7c383cf79bd46087fccb7fbae9a4e8ab9da440b78845c87024a834b3bcc67fc68f4df5c9b3bc5005d30520369d23244ca975259ba88bcc505edf73e0305f6e70KRC+zmpt0VDqhqVW/j64QCyM6UodLwJ3/iuFGEM6q3tQk31gko8YGZBoOplt3iLMfV8DrJcvPGro2XtftkBGqcYoMZ6OmX2QS0irUOg9RfdlbiF8mHH+7sTiJNc0CJ0AFsb+a6S5Fc1lRJxJ42KsVenR+mLpNxRO8Y5I6RX5wTcvxAuD+WGuQlAx6lZX9QmDTdKaoQITKV3YyMago7ZQwS+U4LRRp1Of+zKu2MQyMuBL5mGStpdlpOVMJ71Ma4NCmuYCtc5tpQR/DBZnZhBhoKaRcgvrebBqW4seoBUeE3XBCHN3ptqdyQhcpX3gxtxFP40SyGCjoz/Um6+SIKL86zxfalTBLojVq4FQVAHdNTaJmlCIimNwB0NOitElpiVZfVhzhoH4y3VzP1UHXYN43iHo2272Wyah4V664i16evwponUv4j0EqK/SMCkMQ/Brm5pmI2snDAjfEm1dUVta3ZF8chOXOA49/YpGR2tyG9QzTE0dlwHsclLSa5HVv1KzFnSZkHwyBm6imyuKFTngWXtcEg56nRRkD37AqBXzizVP/o/0R036VofAlWuTMR5AG2BxkhairMKSsLTgwFkmOmTwsRhuGxeQT+Ho+8XPKjKlEcVR6BtenO33MIUQz2tWZFp+QQ8gPmb/WU45Sy99JtQuKdARR5egdmKWP/ySb9mLtlUPWpUi506gIE50+adV6h6RFEGq0+XjlVJ+n0HJF7dai+vkjTOm3Qhf++NNcZ/D4/T7HuWN6Ljkeeobmxfwjdv8aWt2ZmurUICKaic4A7utXJiWqC1wg6BaLy9pzy6H47CtfPLRTSkkSC96N99OnN4V5fulMQiucAaNy9q6lJulapSdsQQLSeAGxpjnnlTzeQQBVssgmKSAr0VpLlhMOWdGl2ZG9tYkiLJVwHWmdYwnYu9LmNX27AfRA5DmA19AxyW1WAOB0obKQaHpjr3YBKeQF3ModenYy3A6DNe9nYMVz3x4dJyux5bC6zwhvZihuO/8rFCpycL6N5eFeN3wH/oVCrh9WatxzKYb4MsK58460WuQ9E6322weUY86WJVamHxNmQnAL1I11KhL6AlEY81seUtCKnZ+7SGyQq0POHQ1mOA7Il3etN4vp/KyaXQer2ae8DfnV5zAThHylWMsrwh0H6PLWFbBc8pAS6iCYIU5z4n3mphca8Zh44j7S4YncajfF4766w58+Y1UAp0L90mwVoNfBIJGBi5oUlZ+AeVT0Cu5TjYnItsezhjIcBc1q5TBwMf/8+wgHvCE3YSntGmDtv9K5dAUqjNa1RCB+bveK6Dc7DHIV5J+q9KoziY=',
+            encryptedHMAC = encryptedMsg.substring(0, 64),
+            encryptedHTML = encryptedMsg.substring(64),
+            decryptedHMAC = CryptoJS.HmacSHA256(encryptedHTML, CryptoJS.SHA256(passphrase).toString()).toString();
+
+        if (decryptedHMAC !== encryptedHMAC) {
+            alert('Bad passphrase!');
+            return;
+        }
+
+        var plainHTML = decrypt(encryptedHTML, passphrase);
+
+        document.write(plainHTML);
+        document.close();
+    });
+</script>
+</body>
+</html>

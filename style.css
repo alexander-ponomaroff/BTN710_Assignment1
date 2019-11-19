@@ -1,0 +1,29 @@
+body {
+  background-color: #d1eaff;
+  margin: auto;
+  width: 80%;
+  padding: 10px;
+}
+
+p { 
+	font-family: Arial, "Times New Roman";
+	font-size: 13px;
+	font-weight: bold;
+}
+
+h1 { 
+	font-family: Arial, "Times New Roman";
+	font-size: 35px;
+}
+
+h2 { 
+	font-family: Arial, "Times New Roman";
+	font-size: 25px;	
+}
+
+
+a { 
+	font-family: Arial, "Times New Roman";
+	font-size: 13px;
+	font-weight: bold;
+}
